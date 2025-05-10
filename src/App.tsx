@@ -1,35 +1,89 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { createBrowserRouter, Navigate, RouterProvider } from 'react-router';
+
+import { ThemeProvider } from '@mui/material';
+
+import ROUTES from './lib/consts/routes';
+import { theme } from './lib/consts/theme';
+import AddTransaction from './pages/app/AddTransaction';
+import Charts from './pages/app/Charts';
+import Desktop from './pages/app/Desktop';
+import TransactionHistory from './pages/app/TransactionHistory';
+import ForgotPassword from './pages/auth/ForgotPassword';
+import Login from './pages/auth/Login';
+import Register from './pages/auth/Register';
+import ResetPassword from './pages/auth/ResetPassword';
+import AppLayout from './pages/layouts/AppLayout';
+import AuthLayout from './pages/layouts/AuthLayout';
+import RootLayout from './pages/layouts/RootLayout';
+
+const router = createBrowserRouter([
+  {
+    path: ROUTES.ROOT.URL,
+    element: <RootLayout />,
+    // loader: () => null,
+    children: [
+      {
+        path: ROUTES.ROOT.URL,
+        element: <Navigate to={ROUTES.AUTH.LOGIN.URL} />,
+      },
+      {
+        path: ROUTES.APP.PATH,
+        element: <AppLayout />,
+        children: [
+          {
+            path: ROUTES.APP.ADD_TRANSACTION.URL,
+            element: <AddTransaction />,
+          },
+          {
+            path: ROUTES.APP.CHARTS.URL,
+            element: <Charts />,
+          },
+          {
+            path: ROUTES.APP.DESKTOP.URL,
+            element: <Desktop />,
+          },
+          {
+            path: ROUTES.APP.TRANSACTION_HISTORY.URL,
+            element: <TransactionHistory />,
+          },
+        ],
+      },
+      {
+        path: ROUTES.AUTH.PATH,
+        element: <AuthLayout />,
+        children: [
+          {
+            index: true,
+            element: <Navigate to={ROUTES.AUTH.LOGIN.URL} />,
+          },
+          {
+            path: ROUTES.AUTH.FORGOT_PASSWORD.URL,
+            element: <ForgotPassword />,
+          },
+          {
+            path: ROUTES.AUTH.LOGIN.URL,
+            element: <Login />,
+          },
+          {
+            path: ROUTES.AUTH.REGISTER.URL,
+            element: <Register />,
+          },
+          {
+            path: ROUTES.AUTH.RESET_PASSWORD.URL,
+            element: <ResetPassword />,
+          },
+        ],
+      },
+    ],
+  },
+]);
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <ThemeProvider theme={theme}>
+      <RouterProvider router={router} />
+    </ThemeProvider>
+  );
 }
 
-export default App
+export default App;
