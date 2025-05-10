@@ -16,6 +16,10 @@ import AppLayout from './pages/layouts/AppLayout';
 import AuthLayout from './pages/layouts/AuthLayout';
 import RootLayout from './pages/layouts/RootLayout';
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient({});
+
 const router = createBrowserRouter([
   {
     path: ROUTES.ROOT.URL,
@@ -80,9 +84,11 @@ const router = createBrowserRouter([
 
 function App() {
   return (
+    <QueryClientProvider client={queryClient}>
     <ThemeProvider theme={theme}>
       <RouterProvider router={router} />
     </ThemeProvider>
+    </QueryClientProvider>
   );
 }
 
