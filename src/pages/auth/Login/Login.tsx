@@ -1,5 +1,6 @@
-import { useForm } from 'react-hook-form';
-
+import React from 'react';
+import { useForm, Controller, FormProvider } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@mui/material';
 
 import FormWrapper from '@/components/form/FormWrapper';
@@ -10,51 +11,102 @@ import authStyles, {
   SpacedButtonsContainer,
 } from '../auth.styles';
 import { AuthHeader } from '../components';
+import type { BodyLoginAuthTokenPost } from '@/api/types';
+import { useLoginAuthTokenPost } from '@/api/auth/auth';
+import { useAuth } from '@/context/AuthContext';
+import ROUTES from '@/lib/consts/routes';
 
-type LoginFormData = {
-  email: string;
-  password: string;
-};
+type LoginFormData = BodyLoginAuthTokenPost
 
-// TODO: Handle login logic here
-const onSubmit = (data: LoginFormData) => {
-  console.log(data);
-};
-
-const Login = () => {
+const Login: React.FC = () => {
   const methods = useForm<LoginFormData>({
-    defaultValues: {
-      email: '',
-      password: '',
-    },
+    defaultValues: { username: '', password: '' },
   });
+  const {
+    formState: { isSubmitting, errors },
+  } = methods;
+
+  const navigate = useNavigate();
+  const { login } = useAuth();
+  const { mutateAsync } = useLoginAuthTokenPost();
+
+  const onSubmit = async (data: LoginFormData): Promise<void> => {
+  const { username, password } = data;
+  try {
+    const tokenData = await mutateAsync({
+      data: { username, password, grant_type: 'password' },
+    });
+    login(tokenData.access_token);
+    navigate(ROUTES.APP.DESKTOP.URL);
+  } catch (err) {
+    console.error('Błąd logowania', err);
+  }
+};
 
   return (
-    <FormWrapper onSubmit={onSubmit} methods={methods} sx={authStyles.form}>
-      <AuthHeader text="Logowanie" />
+    <FormProvider {...methods}>
+      <FormWrapper
+        onSubmit={onSubmit}
+        methods={methods}
+        sx={authStyles.form}
+      >
+        <AuthHeader text="Logowanie" />
 
-      <SingleColumnGrid>
-        <TextInput required label="E-mail" name="email" type="email" />
-        <PasswordInput />
-      </SingleColumnGrid>
+        <SingleColumnGrid>
+          <Controller
+            name="username"
+            control={methods.control}
+            render={({ field }) => (
+              <TextInput
+                {...field}
+                label="Nazwa użytkownika"
+                required
+                autoComplete="username" 
+                error={!!errors.username}
+                helperText={errors.username?.message}
+              />
+            )}
+          />
 
-      <SingleColumnGrid>
-        <Button variant="contained" color="primary" type="submit">
-          Zaloguj
-        </Button>
+          <Controller
+            name="password"
+            control={methods.control}
+            render={({ field }) => (
+              <PasswordInput
+                {...field}
+                label="Hasło"
+                required
+                autoComplete="current-password"
+                error={!!errors.password}
+                helperText={errors.password?.message}
+                
+              />
+            )}
+          />
+        </SingleColumnGrid>
 
-        <SpacedButtonsContainer>
-          <Button variant="text" type="button">
-            {/* TODO: HOOK UP REDIRECT-LINK */}
-            Zapomniałem hasła
+        <SingleColumnGrid>
+          <Button
+            variant="contained"
+            color="primary"
+            type="submit"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Ładowanie…' : 'Zaloguj'}
           </Button>
-          <Button variant="text" type="button">
-            {/* TODO: HOOK UP REDIRECT-LINK */}
-            Stwórz nowe konto
-          </Button>
-        </SpacedButtonsContainer>
-      </SingleColumnGrid>
-    </FormWrapper>
+
+          <SpacedButtonsContainer>
+            <Button variant="text" type="button" onClick={() => navigate(ROUTES.AUTH.FORGOT_PASSWORD.URL)}>
+              Zapomniałem hasła
+            </Button>
+            <Button variant="text" type="button" onClick={() => navigate(ROUTES.AUTH.REGISTER.URL)}>
+              Stwórz nowe konto
+            </Button>
+          </SpacedButtonsContainer>
+        </SingleColumnGrid>
+      </FormWrapper>
+    </FormProvider>
   );
 };
+
 export default Login;

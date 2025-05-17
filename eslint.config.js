@@ -34,5 +34,16 @@ export default tseslint.config(
       ],
       '@typescript-eslint/consistent-type-definitions': ['error', 'type'], // Enforce "type" over "interface"
     },
+    overrides: [
+      {
+        files: ["src/lib/api/**/*.ts"],
+        rules: {
+          "@typescript-eslint/no-unsafe-assignment": "off",
+          "@typescript-eslint/no-unsafe-argument":  "off",
+          "@typescript-eslint/require-await":       "off",
+          "@typescript-eslint/only-throw-error":    "off"
+        }
+      }
+    ]
   }
 );
