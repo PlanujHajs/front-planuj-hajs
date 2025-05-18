@@ -8,25 +8,22 @@ export const AXIOS_INSTANCE = axios.create({
   },
 });
 
-AXIOS_INSTANCE.interceptors.request.use((config) => {
-  const token = localStorage.getItem('authToken');
-  if (token) {
-    // @ts-ignore 
-    config.headers = {
-      ...config.headers,
-      Authorization: `Bearer ${token}`,
-    };
+AXIOS_INSTANCE.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('authToken');
+    if (token) config.headers.Authorization = `Bearer ${token}`;
+    return config;
+  },
+  (error: Error) => {
+    return Promise.reject(error);
   }
-  return config;
-}, (error) => {
-  return Promise.reject(error);
-});
+);
 
 export const axiosCustom = async <T>(
   config: AxiosRequestConfig,
   options?: AxiosRequestConfig
 ): Promise<T> => {
-  const response = await AXIOS_INSTANCE({
+  const response = await AXIOS_INSTANCE<T>({
     ...config,
     ...options,
   });

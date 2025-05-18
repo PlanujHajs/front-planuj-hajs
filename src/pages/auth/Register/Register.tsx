@@ -15,7 +15,7 @@ import { AuthHeader } from '../components';
 
 import { useRegisterAuthRegisterPost } from '@/api/auth/auth';
 import type { UserCreate } from '@/api/types/index.ts';
-
+import { AxiosError } from 'axios';
 
 type RegisterFormData = UserCreate & { repeatPassword: string };
 
@@ -29,11 +29,7 @@ const Register: React.FC = () => {
     },
   });
 
-  const {
-    setError,
-    clearErrors,
-   
-  } = methods;
+  const { setError, clearErrors } = methods;
 
   const {
     mutateAsync: register,
@@ -41,7 +37,7 @@ const Register: React.FC = () => {
     error,
   } = useRegisterAuthRegisterPost();
 
-    const onSubmit = async (data: RegisterFormData) => {
+  const onSubmit = async (data: RegisterFormData) => {
     if (!data.username.trim()) {
       setError('username', {
         type: 'validate',
@@ -61,37 +57,29 @@ const Register: React.FC = () => {
     clearErrors('repeatPassword');
 
     try {
-      const { repeatPassword, ...userData } = data;
+      const { repeatPassword: _, ...userData } = data;
       await register({ data: userData });
-      navigate(ROUTES.AUTH.LOGIN.URL);
-    } catch {
-     
+      await navigate(ROUTES.AUTH.LOGIN.URL);
+    } catch (error) {
+      console.error(error);
     }
   };
 
   return (
-
-    <FormWrapper
-      onSubmit={onSubmit}
-      methods={methods}
-      sx={authStyles.form}
-    >
+    <FormWrapper onSubmit={onSubmit} methods={methods} sx={authStyles.form}>
       <AuthHeader text="Rejestracja" />
 
-        {error && (
+      {error && (
         <Alert severity="error" sx={{ mb: 2 }}>
-          {(error as any)?.response?.data?.detail || 'Wystąpił błąd podczas rejestracji.'}
+          {(error as AxiosError<{ detail: string }> | undefined)?.response?.data
+            .detail ?? 'Wystąpił błąd podczas rejestracji.'}
         </Alert>
       )}
-
 
       <SingleColumnGrid>
         <TextInput label="Nazwa użytkownika" name="username" />
         <PasswordInput label="Hasło" name="password" />
-        <PasswordInput
-          label="Powtórz hasło"
-          name="repeatPassword"
-        />
+        <PasswordInput label="Powtórz hasło" name="repeatPassword" />
       </SingleColumnGrid>
 
       <SingleColumnGrid>
@@ -100,7 +88,9 @@ const Register: React.FC = () => {
           color="primary"
           type="submit"
           disabled={status === 'pending'}
-          startIcon={status === 'pending' ? <CircularProgress size={20} /> : null}
+          startIcon={
+            status === 'pending' ? <CircularProgress size={20} /> : null
+          }
         >
           Zarejestruj
         </Button>
@@ -109,14 +99,14 @@ const Register: React.FC = () => {
           <Button
             variant="text"
             type="button"
-            onClick={() => navigate(ROUTES.AUTH.FORGOT_PASSWORD.URL)}
+            onClick={() => void navigate(ROUTES.AUTH.FORGOT_PASSWORD.URL)}
           >
             Zapomniałem hasła
           </Button>
           <Button
             variant="text"
             type="button"
-            onClick={() => navigate(ROUTES.AUTH.LOGIN.URL)}
+            onClick={() => void navigate(ROUTES.AUTH.LOGIN.URL)}
           >
             Mam już konto
           </Button>

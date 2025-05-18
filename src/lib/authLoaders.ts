@@ -19,18 +19,13 @@ export async function loginAction({ request }: { request: Request }) {
 
 export function requireGuest(): null {
   const token = localStorage.getItem('authToken');
-  if (token) {
-    // eslint-disable-next-line @typescript-eslint/only-throw-error
-    throw redirect(ROUTES.APP.DESKTOP.URL);
-  }
+  if (token) redirect(ROUTES.APP.DESKTOP.URL);
   return null;
 }
 
-export async function requireAuth(): Promise<null> {
+export function requireAuth() {
   const token = localStorage.getItem('authToken');
-  if (!token) {
-    throw redirect(ROUTES.AUTH.LOGIN.URL);
-  }
+  if (!token) redirect(ROUTES.AUTH.LOGIN.URL);
   return null;
 }
 

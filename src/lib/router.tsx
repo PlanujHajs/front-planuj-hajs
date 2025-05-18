@@ -1,8 +1,5 @@
-import {
-  createBrowserRouter,
-  Navigate,
-} from 'react-router';
-import { AuthProvider } from '../context/AuthContext';
+import { createBrowserRouter, Navigate } from 'react-router';
+import { AuthProvider } from '../context/auth/AuthContext';
 import {
   requireAuth,
   requireGuest,
@@ -37,25 +34,35 @@ const router = createBrowserRouter([
       },
       {
         path: ROUTES.AUTH.PATH,
-        element: <AuthLayout />,     
+        element: <AuthLayout />,
         loader: requireGuest,
         children: [
           { index: true, element: <Navigate to={ROUTES.AUTH.LOGIN.URL} /> },
-          { path: ROUTES.AUTH.LOGIN.URL, element: <Login />, action: loginAction },
+          {
+            path: ROUTES.AUTH.LOGIN.URL,
+            element: <Login />,
+            action: loginAction,
+          },
           { path: ROUTES.AUTH.REGISTER.URL, element: <Register /> },
-          { path: ROUTES.AUTH.FORGOT_PASSWORD.URL, element: <ForgotPassword /> },
+          {
+            path: ROUTES.AUTH.FORGOT_PASSWORD.URL,
+            element: <ForgotPassword />,
+          },
           { path: ROUTES.AUTH.RESET_PASSWORD.URL, element: <ResetPassword /> },
         ],
       },
       {
         path: ROUTES.APP.PATH,
-        element: <AppLayout />,     
+        element: <AppLayout />,
         loader: requireAuth,
         children: [
           { path: ROUTES.APP.DESKTOP.URL, element: <Desktop /> },
           { path: ROUTES.APP.CHARTS.URL, element: <Charts /> },
           { path: ROUTES.APP.ADD_TRANSACTION.URL, element: <AddTransaction /> },
-          { path: ROUTES.APP.TRANSACTION_HISTORY.URL, element: <TransactionHistory /> },
+          {
+            path: ROUTES.APP.TRANSACTION_HISTORY.URL,
+            element: <TransactionHistory />,
+          },
           { path: 'logout', action: logoutAction },
         ],
       },

@@ -13,10 +13,10 @@ import authStyles, {
 import { AuthHeader } from '../components';
 import type { BodyLoginAuthTokenPost } from '@/api/types';
 import { useLoginAuthTokenPost } from '@/api/auth/auth';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/context/auth';
 import ROUTES from '@/lib/consts/routes';
 
-type LoginFormData = BodyLoginAuthTokenPost
+type LoginFormData = BodyLoginAuthTokenPost;
 
 const Login: React.FC = () => {
   const methods = useForm<LoginFormData>({
@@ -31,25 +31,21 @@ const Login: React.FC = () => {
   const { mutateAsync } = useLoginAuthTokenPost();
 
   const onSubmit = async (data: LoginFormData): Promise<void> => {
-  const { username, password } = data;
-  try {
-    const tokenData = await mutateAsync({
-      data: { username, password, grant_type: 'password' },
-    });
-    login(tokenData.access_token);
-    navigate(ROUTES.APP.DESKTOP.URL);
-  } catch (err) {
-    console.error('Błąd logowania', err);
-  }
-};
+    const { username, password } = data;
+    try {
+      const tokenData = await mutateAsync({
+        data: { username, password, grant_type: 'password' },
+      });
+      login(tokenData.access_token);
+      await navigate(ROUTES.APP.DESKTOP.URL);
+    } catch (err) {
+      console.error('Błąd logowania', err);
+    }
+  };
 
   return (
     <FormProvider {...methods}>
-      <FormWrapper
-        onSubmit={onSubmit}
-        methods={methods}
-        sx={authStyles.form}
-      >
+      <FormWrapper onSubmit={onSubmit} methods={methods} sx={authStyles.form}>
         <AuthHeader text="Logowanie" />
 
         <SingleColumnGrid>
@@ -61,7 +57,7 @@ const Login: React.FC = () => {
                 {...field}
                 label="Nazwa użytkownika"
                 required
-                autoComplete="username" 
+                autoComplete="username"
                 error={!!errors.username}
                 helperText={errors.username?.message}
               />
@@ -79,7 +75,6 @@ const Login: React.FC = () => {
                 autoComplete="current-password"
                 error={!!errors.password}
                 helperText={errors.password?.message}
-                
               />
             )}
           />
@@ -96,10 +91,18 @@ const Login: React.FC = () => {
           </Button>
 
           <SpacedButtonsContainer>
-            <Button variant="text" type="button" onClick={() => navigate(ROUTES.AUTH.FORGOT_PASSWORD.URL)}>
+            <Button
+              variant="text"
+              type="button"
+              onClick={() => void navigate(ROUTES.AUTH.FORGOT_PASSWORD.URL)}
+            >
               Zapomniałem hasła
             </Button>
-            <Button variant="text" type="button" onClick={() => navigate(ROUTES.AUTH.REGISTER.URL)}>
+            <Button
+              variant="text"
+              type="button"
+              onClick={() => void navigate(ROUTES.AUTH.REGISTER.URL)}
+            >
               Stwórz nowe konto
             </Button>
           </SpacedButtonsContainer>
