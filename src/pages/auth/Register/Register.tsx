@@ -29,10 +29,11 @@ const Register: React.FC = () => {
         },
     });
 
-    const { setError, clearErrors, } = methods;
     const {
+        setError,
+        clearErrors,
         formState: { isSubmitting },
-    } = methods;
+        } = methods;
     const {
         mutateAsync: register,
         error,
@@ -97,8 +98,8 @@ const Register: React.FC = () => {
                 >
                     Zarejestruj
                 </Button>
-
                 <SpacedButtonsContainer>
+                     {/*}
                     <Button
                         variant="text"
                         type="button"
@@ -106,6 +107,7 @@ const Register: React.FC = () => {
                     >
                         Zapomniałem hasła
                     </Button>
+                    */}
                     <Button
                         variant="text"
                         type="button"

@@ -86,6 +86,7 @@ const Login: React.FC = () => {
             color="primary"
             type="submit"
             disabled={isSubmitting}
+            loadingPosition='start'
             startIcon={
             isSubmitting
           ? <CircularProgress color="inherit" size={20} />
@@ -96,6 +97,7 @@ const Login: React.FC = () => {
           </Button>
 
           <SpacedButtonsContainer>
+            {/*}
             <Button
               variant="text"
               type="button"
@@ -103,6 +105,7 @@ const Login: React.FC = () => {
             >
               Zapomniałem hasła
             </Button>
+            */}
             <Button
               variant="text"
               type="button"
