@@ -90,11 +90,7 @@ const Register: React.FC = () => {
                     color="primary"
                     type="submit"
                     disabled={isSubmitting}
-                    startIcon={
-                        isSubmitting
-                            ? <CircularProgress color="inherit" size={20} />
-                            : undefined
-                    }
+                    loadingPosition='start'
                 >
                     Zarejestruj
                 </Button>
