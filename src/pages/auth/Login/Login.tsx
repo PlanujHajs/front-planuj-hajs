@@ -85,13 +85,8 @@ const Login: React.FC = () => {
             variant="contained"
             color="primary"
             type="submit"
-            disabled={isSubmitting}
+            loading={isSubmitting}
             loadingPosition='start'
-            startIcon={
-            isSubmitting
-          ? <CircularProgress color="inherit" size={20} />
-          : undefined
-            }
             >
           Zaloguj
           </Button>
