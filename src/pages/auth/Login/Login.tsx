@@ -1,7 +1,7 @@
 import React from 'react';
 import { useForm, Controller, FormProvider } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@mui/material';
+import { useNavigate } from 'react-router';
+import { Button, CircularProgress } from '@mui/material';
 
 import FormWrapper from '@/components/form/FormWrapper';
 import PasswordInput from '@/components/form/PasswordInput';
@@ -86,8 +86,13 @@ const Login: React.FC = () => {
             color="primary"
             type="submit"
             disabled={isSubmitting}
-          >
-            {isSubmitting ? 'Ładowanie…' : 'Zaloguj'}
+            startIcon={
+            isSubmitting
+          ? <CircularProgress color="inherit" size={20} />
+          : undefined
+            }
+            >
+          Zaloguj
           </Button>
 
           <SpacedButtonsContainer>

@@ -1,6 +1,6 @@
 import { Divider, Button } from '@mui/material';
 import Box from '@mui/material/Box';
-import { Form } from 'react-router-dom';
+import { Form } from 'react-router';
 import AddTransaction from '../AddTransaction';
 import Charts from '../Charts';
 import TransactionHistory from '../TransactionHistory';

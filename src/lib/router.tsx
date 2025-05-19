@@ -1,5 +1,5 @@
 import { createBrowserRouter, Navigate } from 'react-router';
-import { AuthProvider } from '../context/auth/AuthContext';
+import { AuthProvider } from '../context/auth/index';
 import {
   requireAuth,
   requireGuest,
