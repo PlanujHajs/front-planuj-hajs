@@ -1,7 +1,7 @@
 import React from 'react';
 import { useForm, Controller, FormProvider } from 'react-hook-form';
 import { useNavigate } from 'react-router';
-import { Button, CircularProgress } from '@mui/material';
+import { Button } from '@mui/material';
 
 import FormWrapper from '@/components/form/FormWrapper';
 import PasswordInput from '@/components/form/PasswordInput';
