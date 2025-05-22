@@ -17,19 +17,24 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import FormWrapper from '@/components/form/FormWrapper';
 import TextInput from '@/components/form/TextInput';
+import { CategoryOut } from '@/api/types';
 
-const tranzactionSchemaValidation = z.object({
-  newExpenseCategory: z.string().min(1, 'Nazwa jest wymagana'),
-});
-
-const TransactionExpenseCategory = ({ disabled }: { disabled: boolean }) => {
-  const methods = useForm({
-    defaultValues: {
-      newExpenseCategory: '',
-    },
-    resolver: zodResolver(tranzactionSchemaValidation),
+const tranzactionSchemaValidation = (categories: CategoryOut[]) =>
+  z.object({
+    newExpenseCategory: z
+      .string()
+      .min(1, 'Nazwa jest wymagana')
+      .refine(
+        (val) =>
+          !categories.some(
+            (category) =>
+              category.name.trim().toLowerCase() === val.trim().toLowerCase()
+          ),
+        { message: 'Kategoria o tej nazwie już istnieje' }
+      ),
   });
 
+const TransactionExpenseCategory = ({ disabled }: { disabled: boolean }) => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => {
     setOpen(true);
@@ -37,16 +42,19 @@ const TransactionExpenseCategory = ({ disabled }: { disabled: boolean }) => {
   const handleClose = () => {
     setOpen(false);
   };
-  // const methods = useFormContext();
-
-  // const { mutateAsync: createCategory, isPending: submittingCategory } =
-  //   useCreateCategoryCategoriesPost();
 
   const { data = [] } = useRouteCategoriesGet();
   const { mutateAsync } = useCreateCategoryCategoriesPost();
 
+  const methods = useForm({
+    defaultValues: {
+      newExpenseCategory: '',
+    },
+    resolver: zodResolver(tranzactionSchemaValidation(data)),
+  });
+
   const onSubmit = useCallback(
-    async (data: z.infer<typeof tranzactionSchemaValidation>) => {
+    async (data: z.infer<ReturnType<typeof tranzactionSchemaValidation>>) => {
       await mutateAsync({
         data: {
           name: data.newExpenseCategory,

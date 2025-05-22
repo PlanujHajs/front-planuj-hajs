@@ -7,10 +7,17 @@ import { useForm } from 'react-hook-form';
 import TransactionType from './components/TransactionType';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useCreateIncomeIncomesPost } from '@/api/incomes/incomes';
-import { useCreateExpenseExpensesPost } from '@/api/expenses/expenses';
+import {
+  useCreateIncomeIncomesPost,
+  useListIncomesIncomesGet,
+} from '@/api/incomes/incomes';
+import {
+  useCreateExpenseExpensesPost,
+  useListExpensesExpensesGet,
+} from '@/api/expenses/expenses';
 import { useCallback, useMemo } from 'react';
 import TransactionExpenseCategory from './components/TransactionExpenseCategory';
+import { useQueryClient } from '@tanstack/react-query';
 
 const schemaValidation = z.object({
   description: z.string().min(1, 'Nazwa jest wymagana'),
@@ -26,6 +33,7 @@ const schemaValidation = z.object({
 });
 
 const AddTransaction = () => {
+  const queryClient = useQueryClient();
   const methods = useForm({
     defaultValues: {
       description: '',
@@ -37,6 +45,8 @@ const AddTransaction = () => {
     resolver: zodResolver(schemaValidation),
   });
 
+  const { queryKey: incomesQueryKey } = useListIncomesIncomesGet();
+  const { queryKey: expensesQueryKey } = useListExpensesExpensesGet();
   const { mutateAsync: createIncome, isPending: incomePending } =
     useCreateIncomeIncomesPost();
   const { mutateAsync: createExpense, isPending: expensePending } =
@@ -63,15 +73,23 @@ const AddTransaction = () => {
 
       if (type === 'income') {
         await createIncome({ data });
+        await queryClient.refetchQueries({ queryKey: incomesQueryKey });
       } else {
         if (!expenseCategory) throw new Error('Expense category is required');
 
+        await queryClient.refetchQueries({ queryKey: expensesQueryKey });
         await createExpense({
           data: { ...data, category_id: expenseCategory },
         });
       }
     },
-    [createIncome, createExpense]
+    [
+      createIncome,
+      queryClient,
+      incomesQueryKey,
+      expensesQueryKey,
+      createExpense,
+    ]
   );
 
   return (
