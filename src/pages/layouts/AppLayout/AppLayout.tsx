@@ -5,7 +5,14 @@ import { Box } from '@mui/material';
 // TODO: Finish me
 const AppLayout = () => {
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        minHeight: '100vh',
+        padding: '2rem',
+      }}
+    >
       <Box
         sx={{
           flex: 1,
