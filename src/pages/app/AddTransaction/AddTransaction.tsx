@@ -95,7 +95,7 @@ const AddTransaction = () => {
   return (
     <Paper sx={{ padding: '2rem' }}>
       <Typography variant="h4" component="h1" sx={{ marginBottom: '2rem' }}>
-        Dodaj nową tranzakcje
+        Dodaj nową transakcje
       </Typography>
       <FormWrapper
         sx={{ display: 'grid', gap: '1rem' }}

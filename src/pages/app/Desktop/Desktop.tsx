@@ -12,15 +12,13 @@ const Desktop = () => (
     <AddTransaction /> <Divider />
     <TransactionHistory /> <Divider orientation="vertical" />
     <Charts />
-
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+    <Box sx={{ position: 'absolute', right: '2rem', top: '2rem' }}>
       <Form method="post" action="../logout">
         <Button type="submit" variant="outlined" color="secondary">
           Wyloguj
         </Button>
       </Form>
     </Box>
-
     <NotificationButton />
   </Box>
 );

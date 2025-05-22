@@ -16,6 +16,7 @@ import {
   CardContent,
   CardActions,
   Button,
+  Box,
 } from '@mui/material';
 
 const overlayStyle = {
@@ -67,108 +68,119 @@ const TransactionHistory = () => {
         </MuiBox>
       )}
       <Typography variant="h3" component="h1">
-        Tranzakcje:
+        transakcje:
       </Typography>
 
-      <Typography variant="h4" component="h2">
-        Incomes
-      </Typography>
-
-      {incomes.map(({ id, amount, description, date }) => (
-        <Card
-          key={id}
+      <Box sx={{ display: 'flex', gap: '1rem' }}>
+        <Box
           sx={{
-            background: (theme) =>
-              `linear-gradient(25deg, ${theme.palette.success.light} -250%, #fff 50%)`,
-            backgroundColor: (theme) => theme.palette.success.light,
+            display: 'grid',
+            gap: '1rem',
+            alignContent: 'flex-start',
           }}
         >
-          <CardContent sx={{ paddingBottom: 0 }}>
-            <Typography
-              gutterBottom
-              sx={{ color: 'text.secondary', fontSize: 14 }}
-            >
-              {date ? format(new Date(date), 'yyyy-MM-dd') : ''}
-            </Typography>
-            <Typography
-              component="div"
-              sx={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-            >
-              <Typography variant="h5" component="span">
-                {description} -
-              </Typography>
-              <Typography component="span" sx={{ color: 'text.secondary' }}>
-                {amount} zł
-              </Typography>
-            </Typography>
-          </CardContent>
-          <CardActions>
-            <Button
-              onClick={() => {
-                void (async () => {
-                  await deleteIncome({ id });
-                  await refetchIncomes();
-                })();
-              }}
-              loading={deletingIncome}
-              color="error"
-              size="small"
-            >
-              Usuń
-            </Button>
-          </CardActions>
-        </Card>
-      ))}
+          <Typography variant="h4" component="h2">
+            Incomes
+          </Typography>
 
-      <Typography variant="h4" component="h2">
-        Expenses
-      </Typography>
-
-      {expenses.map(({ id, amount, description, date }) => (
-        <Card
-          key={id}
-          sx={{
-            background: (theme) =>
-              `linear-gradient(25deg, ${theme.palette.error.light} -250%, #fff 50%)`,
-            backgroundColor: (theme) => theme.palette.error.light,
-          }}
-        >
-          <CardContent sx={{ paddingBottom: 0 }}>
-            <Typography
-              gutterBottom
-              sx={{ color: 'text.secondary', fontSize: 14 }}
-            >
-              {date ? format(new Date(date), 'yyyy-MM-dd') : ''}
-            </Typography>
-            <Typography
-              component="div"
-              sx={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-            >
-              <Typography variant="h5" component="span">
-                {description} -
-              </Typography>
-              <Typography component="span" sx={{ color: 'text.secondary' }}>
-                {amount} zł
-              </Typography>
-            </Typography>
-          </CardContent>
-          <CardActions>
-            <Button
-              onClick={() => {
-                void (async () => {
-                  await deleteExpense({ id });
-                  await refetchExpesnes();
-                })();
+          {incomes.map(({ id, amount, description, date }) => (
+            <Card
+              key={id}
+              sx={{
+                background: (theme) =>
+                  `linear-gradient(25deg, ${theme.palette.success.light} -250%, #fff 50%)`,
+                backgroundColor: (theme) => theme.palette.success.light,
               }}
-              loading={deletingExpense}
-              color="error"
-              size="small"
             >
-              Usuń
-            </Button>
-          </CardActions>
-        </Card>
-      ))}
+              <CardContent sx={{ paddingBottom: 0 }}>
+                <Typography
+                  gutterBottom
+                  sx={{ color: 'text.secondary', fontSize: 14 }}
+                >
+                  {date ? format(new Date(date), 'yyyy-MM-dd') : ''}
+                </Typography>
+                <Typography
+                  component="div"
+                  sx={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                >
+                  <Typography variant="h5" component="span">
+                    {description} -
+                  </Typography>
+                  <Typography component="span" sx={{ color: 'text.secondary' }}>
+                    {amount} zł
+                  </Typography>
+                </Typography>
+              </CardContent>
+              <CardActions>
+                <Button
+                  onClick={() => {
+                    void (async () => {
+                      await deleteIncome({ id });
+                      await refetchIncomes();
+                    })();
+                  }}
+                  loading={deletingIncome}
+                  color="error"
+                  size="small"
+                >
+                  Usuń
+                </Button>
+              </CardActions>
+            </Card>
+          ))}
+        </Box>
+        <Box sx={{ display: 'grid', gap: '1rem' }}>
+          <Typography variant="h4" component="h2">
+            Expenses
+          </Typography>
+
+          {expenses.map(({ id, amount, description, date }) => (
+            <Card
+              key={id}
+              sx={{
+                background: (theme) =>
+                  `linear-gradient(25deg, ${theme.palette.error.light} -250%, #fff 50%)`,
+                backgroundColor: (theme) => theme.palette.error.light,
+              }}
+            >
+              <CardContent sx={{ paddingBottom: 0 }}>
+                <Typography
+                  gutterBottom
+                  sx={{ color: 'text.secondary', fontSize: 14 }}
+                >
+                  {date ? format(new Date(date), 'yyyy-MM-dd') : ''}
+                </Typography>
+                <Typography
+                  component="div"
+                  sx={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+                >
+                  <Typography variant="h5" component="span">
+                    {description} -
+                  </Typography>
+                  <Typography component="span" sx={{ color: 'text.secondary' }}>
+                    {amount} zł
+                  </Typography>
+                </Typography>
+              </CardContent>
+              <CardActions>
+                <Button
+                  onClick={() => {
+                    void (async () => {
+                      await deleteExpense({ id });
+                      await refetchExpesnes();
+                    })();
+                  }}
+                  loading={deletingExpense}
+                  color="error"
+                  size="small"
+                >
+                  Usuń
+                </Button>
+              </CardActions>
+            </Card>
+          ))}
+        </Box>
+      </Box>
     </Paper>
   );
 };
