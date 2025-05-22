@@ -1,31 +1,78 @@
-import Box from '@mui/material/Box';
+import { useListExpensesExpensesGet } from '@/api/expenses/expenses';
+import { useListIncomesIncomesGet } from '@/api/incomes/incomes';
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
+import Button from '@mui/material/Button';
+import { Paper, Typography } from '@mui/material';
+import { useCallback, useMemo } from 'react';
 
-// TODO: PLACEHOLDER, ADD FORM PAGE
-const Charts = () => (
-  <Box>
-    <h1>Charts</h1>
-    <p>This is the Charts page.</p>
-    <p>Here you can visualize your data in various chart formats.</p>
-    <p>Use the navigation menu to explore different chart types.</p>
-    <p>Click on the chart titles to view more details.</p>
-    <p>Don't forget to check out the settings for customization options.</p>
-    <p>Happy charting!</p>
-    <p>For any issues, please refer to the documentation or contact support.</p>
-    <p>Thank you for using our charting tool!</p>
-    <p>We hope you find it useful for your data analysis needs.</p>
-    <p>Stay tuned for more features and updates in the future.</p>
-    <p>We appreciate your feedback and suggestions.</p>
-    <p>Have a great day!</p>
-    <p>Best regards,</p>
-    <p>The Charting Team</p>
-    <p>Follow us on social media for the latest news and updates.</p>
-    <p>Join our community for discussions and support.</p>
-    <p>Check out our blog for tips and tricks on data visualization.</p>
-    <p>Explore our resources for learning more about charting techniques.</p>
-    <p>Don't forget to subscribe to our newsletter for exclusive content.</p>
-    <p>Thank you for being a part of our charting community!</p>
-    <p>We look forward to seeing your amazing charts!</p>
-    <p>Let's make data visualization fun and engaging!</p>
-  </Box>
-);
+const COLORS = ['#e57373', '#64b5f6'];
+
+const Charts = () => {
+  const { data: expenses = [] } = useListExpensesExpensesGet();
+  const { data: incomes = [] } = useListIncomesIncomesGet();
+
+  const pieData = useMemo(() => {
+    // Suma wydatków i przychodów
+    const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
+    const totalIncomes = incomes.reduce((sum, i) => sum + i.amount, 0);
+
+    // Dane do wykresu kołowego
+    return [
+      { name: 'Wydatki', value: totalExpenses },
+      { name: 'Przychody', value: totalIncomes },
+    ];
+  }, [expenses, incomes]);
+
+  // Eksport do CSV
+  const handleExportCSV = useCallback(() => {
+    const header = 'typ,kwota\n';
+    const rows = pieData
+      .map((row) => `${row.name},${row.value.toString()}`)
+      .join('\n');
+    const csv = header + rows;
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'podsumowanie.csv';
+    a.click();
+    window.URL.revokeObjectURL(url);
+  }, [pieData]);
+
+  return (
+    <Paper sx={{ padding: '2rem' }}>
+      <Typography variant="h3" component="h1">
+        Podsumowanie finansowe
+      </Typography>
+      <Button variant="contained" onClick={handleExportCSV} sx={{ my: 2 }}>
+        Eksportuj do CSV
+      </Button>
+      <ResponsiveContainer width="100%" height={350}>
+        <PieChart>
+          <Pie
+            data={pieData}
+            dataKey="value"
+            nameKey="name"
+            cx="50%"
+            cy="50%"
+            outerRadius={150}
+          >
+            {pieData.map((entry, index) => (
+              <Cell key={entry.name} fill={COLORS[index % COLORS.length]} />
+            ))}
+          </Pie>
+          <Tooltip formatter={(value: number) => `${value.toString()} zł`} />
+          <Legend />
+        </PieChart>
+      </ResponsiveContainer>
+    </Paper>
+  );
+};
 export default Charts;
